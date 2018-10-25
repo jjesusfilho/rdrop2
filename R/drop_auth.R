@@ -76,6 +76,12 @@ drop_auth <- function(new_user = FALSE,
       file.remove(".httr-oauth")
     }
 
+    if (interactive()) {
+      # testing url
+      options(rstudio.port = 8100)
+      APP_URL <- "http://localhost:8100/"
+    } 
+    
     # set dropbox oauth2 endpoints
     dropbox <- httr::oauth_endpoint(
       authorize = "https://www.dropbox.com/oauth2/authorize",
@@ -83,7 +89,9 @@ drop_auth <- function(new_user = FALSE,
     )
 
     # registered dropbox app's key & secret
-    dropbox_app <- httr::oauth_app("dropbox", key, secret)
+    dropbox_app <- httr::oauth_app("dropbox",
+                                   key, secret,
+                                   redirect_uri = APP_URL)
 
     # get the token
     dropbox_token <- httr::oauth2.0_token(dropbox, dropbox_app, cache = cache)
